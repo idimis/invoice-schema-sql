@@ -1,50 +1,137 @@
-CREATE TABLE "seller" (
+CREATE TABLE "buyers" (
   "id" id,
   "name" text,
-  "address" text,
-  "contact_info" text
+  "adderss" text,
+  "contact_info" text,
+  "created_at" datetime,
+  "update_at" datetime,
+  "deleted_at" datetime
 );
 
-CREATE TABLE "buyer" (
+CREATE TABLE "sellers" (
   "id" id,
   "name" text,
-  "address" text,
+  "adderss" text,
   "contact_info" text,
-  "shipping_address" text
+  "created_at" datetime,
+  "update_at" datetime,
+  "deleted_at" datetime
+);
+
+CREATE TABLE "shipping_address" (
+  "id" id,
+  "buyer_id" id,
+  "name" text,
+  "adderss" text,
+  "created_at" datetime,
+  "update_at" datetime,
+  "deleted_at" datetime
+);
+
+CREATE TABLE "courier_types" (
+  "id" id,
+  "name" text,
+  "created_at" datetime,
+  "update_at" datetime,
+  "deleted_at" datetime
+);
+
+CREATE TABLE "payment_types" (
+  "id" id,
+  "invoice_id" id,
+  "name" text,
+  "amount" int,
+  "created_at" datetime,
+  "update_at" datetime,
+  "deleted_at" datetime
 );
 
 CREATE TABLE "items" (
   "id" id,
-  "seller_id" integer,
-  "name" text,
+  "seller_id" id,
+  "nae" text,
   "description" text,
-  "price" integer
+  "price" integer,
+  "weight" integer,
+  "created_at" datetime,
+  "update_at" datetime,
+  "deleted_at" datetime
 );
 
-CREATE TABLE "invoices" (
-  "id" id,
-  "label" text,
-  "seller_id" integer,
-  "buyer_id" integer,
-  "courier_id" integer,
-  "destination" text,
-  "purchase_date" datetime,
-  "last_update" datetime
-);
-
-CREATE TABLE "invocie_items" (
+CREATE TABLE "invoice_item" (
   "id" id,
   "invoice_id" id,
   "items_id" id,
-  "quantity" integer
+  "quantitiy" integer,
+  "created_at" datetime,
+  "update_at" datetime,
+  "deleted_at" datetime
 );
 
-ALTER TABLE "items" ADD FOREIGN KEY ("seller_id") REFERENCES "seller" ("id");
+CREATE TABLE "promo" (
+  "id" id,
+  "invoice_id" id,
+  "name" text,
+  "discount" float,
+  "cashback" float,
+  "created_at" datetime,
+  "update_at" datetime,
+  "deleted_at" datetime
+);
 
-ALTER TABLE "invoices" ADD FOREIGN KEY ("buyer_id") REFERENCES "buyer" ("id");
+CREATE TABLE "insurance" (
+  "id" id,
+  "invoice_id" id,
+  "name" text,
+  "created_at" datetime,
+  "update_at" datetime,
+  "deleted_at" datetime
+);
 
-ALTER TABLE "invoices" ADD FOREIGN KEY ("seller_id") REFERENCES "seller" ("id");
+CREATE TABLE "invoice" (
+  "id" id,
+  "invoice_number" id,
+  "buyers_id" id,
+  "seller_id" id,
+  "courier_type_id" id,
+  "shipping_address" id,
+  "services_fee" integer,
+  "app_services_fee" integer,
+  "shipping_fee" integer,
+  "created_at" datetime,
+  "update_at" datetime,
+  "deleted_at" datetime
+);
 
-ALTER TABLE "invocie_items" ADD FOREIGN KEY ("invoice_id") REFERENCES "invoices" ("id");
+CREATE TABLE "item_snapshot" (
+  "id" id,
+  "items_id" id,
+  "price" integer,
+  "created_at" datetime,
+  "update_at" datetime,
+  "deleted_at" datetime
+);
 
-ALTER TABLE "invocie_items" ADD FOREIGN KEY ("items_id") REFERENCES "items" ("id");
+ALTER TABLE "invoice" ADD FOREIGN KEY ("buyers_id") REFERENCES "buyers" ("id");
+
+ALTER TABLE "invoice" ADD FOREIGN KEY ("seller_id") REFERENCES "sellers" ("id");
+
+ALTER TABLE "invoice" ADD FOREIGN KEY ("courier_type_id") REFERENCES "courier_types" ("id");
+
+ALTER TABLE "invoice" ADD FOREIGN KEY ("shipping_address") REFERENCES "shipping_address" ("id");
+
+ALTER TABLE "payment_types" ADD FOREIGN KEY ("invoice_id") REFERENCES "invoice" ("id");
+
+ALTER TABLE "invoice_item" ADD FOREIGN KEY ("invoice_id") REFERENCES "invoice" ("id");
+
+ALTER TABLE "promo" ADD FOREIGN KEY ("invoice_id") REFERENCES "invoice" ("id");
+
+ALTER TABLE "insurance" ADD FOREIGN KEY ("invoice_id") REFERENCES "invoice" ("id");
+
+ALTER TABLE "invoice_item" ADD FOREIGN KEY ("items_id") REFERENCES "items" ("id");
+
+ALTER TABLE "item_snapshot" ADD FOREIGN KEY ("items_id") REFERENCES "items" ("id");
+
+ALTER TABLE "shipping_address" ADD FOREIGN KEY ("buyer_id") REFERENCES "buyers" ("id");
+
+ALTER TABLE "items" ADD FOREIGN KEY ("seller_id") REFERENCES "sellers" ("id");
